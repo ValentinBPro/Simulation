@@ -1,0 +1,7 @@
+Le StopLoss doit-il etre réajusté en fonction du gain le plus haut atteind?
+
+
+TODO LIST
+- Concevoir un graphique capable d'afficher les courbes
+- Créer une fonction selon les parametres suivants:
+    Achat (struct contenant le temps en h et le %)
