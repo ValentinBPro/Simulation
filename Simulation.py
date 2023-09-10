@@ -23,22 +23,11 @@ def simulate_trading(actions, achat_delta, achat_deficit_pourcent, achat_rehauss
     prix_action = 0 #defaut 1€ 
 
 
-
     for prix_actuel in actions:
 
-        # On adapte le delta d'achat
-        delta_actions.append(prix_actuel)
-        if len(delta_action) == achat_delta :
-            delta_actions.popleft
-
-        # On determine le niveau le plus bas selon le delta temps défini
-        pic_bas = delta_actions.index[0]
-        for delta_action in delta_actions :
-            if delta_action >= pic_bas:
-                pic_bas = delta_action
-
-        achat_deficit_pourcent = (delta_actions[0]/pic_bas)-1
-        achat_rehausse_pourcent = (delta_actions[-1]/pic_bas)-1 
+        
+        delta_actions = maj_delta_achat(delta_actions, achat_delta, prix_actuel)
+        achat_deficit_pourcent, achat_rehausse_pourcent = analyse_achat(delta_actions)
 
 
         # Si nous n'avons pas d'actions, achetons si le prix est bas
@@ -67,3 +56,37 @@ def simulate_trading(actions, achat_delta, achat_deficit_pourcent, achat_rehauss
     portefeuille_history.append(portefeuille)  # Ajouter le solde final à l'historique
 
     return portefeuille, portefeuille_history
+
+
+# On adapte le delta d'achat
+def maj_delta_achat(delta_actions, achat_delta, prix_actuel) :
+    delta_actions.append(prix_actuel)
+    if len(delta_actions) == achat_delta :
+        delta_actions.popleft
+
+    return delta_actions
+
+# On determine le taux de deficit et de gain à partir du niveau le plus bas selon le delta temps défini
+def analyse_achat(delta_actions) :
+    pic_bas = Get_picBas_valeur(delta_actions)
+    achat_deficit_pourcent = round(pic_bas/delta_actions[0],2)-1
+    achat_rehausse_pourcent = round(delta_actions[-1]/pic_bas,2)-1
+
+    return achat_deficit_pourcent, achat_rehausse_pourcent
+
+# Determine la valeur du pic le plus bas du delta temps
+def Get_picBas_valeur(delta_actions) :
+    pic_bas = delta_actions[0]
+    for delta_action in delta_actions :
+        if delta_action <= pic_bas:
+            pic_bas = delta_action
+    return pic_bas
+    
+def Achat_Action():
+    return True
+
+def Revente_Action_Deficit():
+    return True
+
+def Revente_Action_Gain():
+    return True

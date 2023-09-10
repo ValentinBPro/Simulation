@@ -13,9 +13,8 @@ vente_gainMax = 0.01  # 15% de profit avant revente
 achat_delta = 10 # Temps en Heure prise en compte
 achat_diffA = 10 #% de Baisse
 achat_diffB = 10 #% de Rehausse 
-test=[1,2,3,4,5,4,3,2,1,2,3,4,5]
 
-final_portefeuille, portefeuille_history = Simulation.simulate_trading(test, 0, 0, vente_deficitMax, vente_gainMax)
+final_portefeuille, portefeuille_history = Simulation.simulate_trading(test, 10, -3, 6, vente_deficitMax, vente_gainMax, 10)
 
 # Afficher la courbe de l'évolution du solde
 #plt.plot(range(len(actions)), actions, label='Bourse', color='blue')
