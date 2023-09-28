@@ -14,7 +14,7 @@ achat_delta = 10 # Temps en Heure prise en compte
 achat_diffA = 10 #% de Baisse
 achat_diffB = 10 #% de Rehausse 
 
-final_portefeuille, portefeuille_history = Simulation.simulate_trading(test, 10, -3, 6, vente_deficitMax, vente_gainMax, 10)
+final_portefeuille, portefeuille_history = Simulation.simulate_trading(actions, 10, -3, 6, vente_deficitMax, vente_gainMax, 10)
 
 # Afficher la courbe de l'évolution du solde
 #plt.plot(range(len(actions)), actions, label='Bourse', color='blue')

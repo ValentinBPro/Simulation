@@ -1,52 +1,47 @@
 from collections import deque
 
-delta_actions = deque()
+
+    
 
 # Permet de simuler le systeme dans un envirronement donné en apportant les parametres d'un bot
 # Parametre 1 : Achat (Struct sur le Temps de prise en compte et le % de Baisse et remontée)
-# achat.temps, achat.baisse_pourcent achat_delta
+# achat.temps, achat.baisse_p100 achat_delta
 # Parametre 2 : Revente (Struct sur le % de deficit et de gain)
 # 
 # Parametres :
 # achat_delta - Temps passé prit en compte pour le calcul (en heures)
-# achat_deficit_pourcent - % de deficit avant remontée (entre le delta t et le point le plus bas dans le delta)
-# achat_rehausse_pourcent - % de gain depuis rehausse (entre point le plus bas et l'instant t)
-# vente_deficit_pourcent - Vente si deficit atteint % (doit t-il s'adapter? si oui, gain % n'a pas d'interet)
-# vente_gain_pourcent - Vente si gain atteint % 
+# achat_deficit_p100 - % de deficit avant remontée (entre le delta t et le point le plus bas dans le delta)
+# achat_rehausse_p100 - % de gain depuis rehausse (entre point le plus bas et l'instant t)
+# vente_deficit_p100 - Vente si deficit atteint % (doit t-il s'adapter? si oui, gain % n'a pas d'interet)
+# vente_gain_p100 - Vente si gain atteint % 
 
 
-def simulate_trading(actions, achat_delta, achat_deficit_pourcent, achat_rehausse_pourcent, vente_deficitMax, vente_gainMax, pourcent_ajustement):
+def simulate_trading(actions, achat_delta, achat_deficit_p100, achat_rehausse_p100, vente_deficitMax, vente_gainMax, pourcent_ajustement):
+    actions_detenues = 0
+    prix_action = 1 #defaut 1€ 
+    delta_actions = deque()
     portefeuille_initial = 10000  # Montant initial
     portefeuille = portefeuille_initial
-    portefeuille_history = [portefeuille]
-    actions_detenues = 0
-    prix_action = 0 #defaut 1€ 
+    portefeuille_history = [portefeuille]       
 
 
     for prix_actuel in actions:
-
         
         delta_actions = maj_delta_achat(delta_actions, achat_delta, prix_actuel)
-        achat_deficit_pourcent, achat_rehausse_pourcent = analyse_achat(delta_actions)
-
+        achat_deficit_p100, achat_rehausse_p100 = analyse_achat(delta_actions)
 
         # Si nous n'avons pas d'actions, achetons si le prix est bas
         if actions_detenues == 0:  
-            prix_action = prix_actuel
-            nb_actions_a_acheter = 10#int(portefeuille / prix_action)
-            portefeuille -= nb_actions_a_acheter * prix_action
-            actions_detenues += nb_actions_a_acheter
-
+            Achat_Action(portefeuille, actions_detenues, prix_actuel)
+            
         # Si le prix a augmenté suffisamment, vendons
         if (prix_actuel - prix_action) / prix_action >= vente_gainMax:  
-            portefeuille += actions_detenues * prix_actuel
-            actions_detenues = 0
+            Revente_Action_Deficit(portefeuille, actions_detenues, prix_actuel)
 
         # Si le prix a baissé trop, vendons pour limiter les pertes
         if (prix_action - prix_actuel) / prix_action >= vente_deficitMax:  
-            portefeuille += actions_detenues * prix_actuel
-            actions_detenues = 0
-
+            Revente_Action_Gain(portefeuille, actions_detenues, prix_actuel)
+        
         portefeuille_history.append(portefeuille)  # Ajouter le solde actuel à l'historique
         print({portefeuille})
 
@@ -69,10 +64,10 @@ def maj_delta_achat(delta_actions, achat_delta, prix_actuel) :
 # On determine le taux de deficit et de gain à partir du niveau le plus bas selon le delta temps défini
 def analyse_achat(delta_actions) :
     pic_bas = Get_picBas_valeur(delta_actions)
-    achat_deficit_pourcent = round(pic_bas/delta_actions[0],2)-1
-    achat_rehausse_pourcent = round(delta_actions[-1]/pic_bas,2)-1
+    achat_deficit_p100 = round(pic_bas/delta_actions[0],2)-1
+    achat_rehausse_p100 = round(delta_actions[-1]/pic_bas,2)-1
 
-    return achat_deficit_pourcent, achat_rehausse_pourcent
+    return achat_deficit_p100, achat_rehausse_p100
 
 # Determine la valeur du pic le plus bas du delta temps
 def Get_picBas_valeur(delta_actions) :
@@ -82,11 +77,16 @@ def Get_picBas_valeur(delta_actions) :
             pic_bas = delta_action
     return pic_bas
     
-def Achat_Action():
-    return True
+def Achat_Action(portefeuille, actions_detenues, prix_actuel):
+    prix_action = prix_actuel
+    nb_actions_a_acheter = 10#int(portefeuille / prix_action)
+    portefeuille -= nb_actions_a_acheter * prix_action
+    actions_detenues += nb_actions_a_acheter
 
-def Revente_Action_Deficit():
-    return True
+def Revente_Action_Deficit(portefeuille, actions_detenues, prix_actuel):
+    portefeuille += actions_detenues * prix_actuel
+    actions_detenues = 0
 
-def Revente_Action_Gain():
-    return True
+def Revente_Action_Gain(portefeuille, actions_detenues, prix_actuel):
+    portefeuille += actions_detenues * prix_actuel
+    actions_detenues = 0
