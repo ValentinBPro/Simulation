@@ -47,7 +47,6 @@ class bot:
         self._vente_gainMax = param_list[4]
         self._pourcent_ajustement = param_list[5]
         
-
     def GetAchat_delta(self):
         return self._achat_delta
     
