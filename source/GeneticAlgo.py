@@ -15,7 +15,7 @@ def evaluation_bot(bot):
     return portefeuille_final
 
 # Fonction de création d'une population initiale
-def creation_population(population_taille):
+def creation_population(population_taille : int) -> List[bot]:
     population = []
     for _ in range(population_taille):
         vente_deficitMax = random.uniform(0.01, 0.2)  # Valeurs aléatoires pour StopLoss entre 1% et 20%
@@ -56,6 +56,7 @@ def mutation(bot_choisi: bot):
     mutation_bot = bot(0, tuple(mutation_param_bot))
     return mutation_bot
 
+
 #Permet de generer les enfants depuis 2 parents selectionnés par roulette de selection
 def Incubation(bot_parent1, bot_parent2):
     bot_enfant1, bot_enfant2 = croisement(bot_parent1, bot_parent2)
@@ -72,19 +73,23 @@ nb_meilleurs_bots = 10
 taux_mutation = 0.1
 
 
-def demarrage():
+def demarrage(actions, nb_generations : int, population_taille : int):
     # Création de la population initiale
     population = creation_population(population_taille)
 
     # Boucle d'évolution sur plusieurs générations
     for generation in range(nb_generations):
+
+        # Mise en Situation des bots
+        for i in range(len(population)) :
+            population[i] = Simulation.simulate_trading(actions, population[i])
+
         # Sélection des meilleurs bots
         meilleurs_bots = selection_meilleurs_bots(population, nb_meilleurs_bots)
 
         # Création de la nouvelle génération par croisement et mutation
         nouvelle_population = meilleurs_bots.copy()
 
-        #Incubation genetique
         while len(nouvelle_population) < population_taille:
             parent1, parent2 = random.choices(meilleurs_bots, k=2)
             enfant1, enfant2 = Incubation(parent1, parent2)
@@ -95,10 +100,12 @@ def demarrage():
 
 
     # Sélection du meilleur bot final
-    meilleur_bot = selection_meilleurs_bots(population, 1)[0]
-    meilleur_vente_deficitMax, meilleur_vente_gainMax = meilleur_bot
-    meilleur_portefeuille_final = Simulation.simulate_trading(actions, 10, -3, 6, meilleur_vente_deficitMax, meilleur_vente_gainMax, 10)
+    #NOTE : retourner les resultats 
 
-    print(f"Meilleur StopLoss : {meilleur_vente_deficitMax:.4f}")
-    print(f"Meilleur TakeProfit : {meilleur_vente_gainMax:.4f}")
-    print("Solde final avec meilleurs paramètres : {}".format(meilleur_portefeuille_final[0]))
+    #meilleur_bot = selection_meilleurs_bots(population, 1)[0]
+    #meilleur_vente_deficitMax, meilleur_vente_gainMax = meilleur_bot
+    #meilleur_portefeuille_final = Simulation.simulate_trading(actions, 10, -3, 6, meilleur_vente_deficitMax, meilleur_vente_gainMax, 10)
+
+    #print(f"Meilleur StopLoss : {meilleur_vente_deficitMax:.4f}")
+    #print(f"Meilleur TakeProfit : {meilleur_vente_gainMax:.4f}")
+    #print("Solde final avec meilleurs paramètres : {}".format(meilleur_portefeuille_final[0]))

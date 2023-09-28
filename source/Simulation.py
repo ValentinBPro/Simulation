@@ -1,3 +1,4 @@
+from Bot import bot
 from collections import deque
 
 
@@ -16,7 +17,17 @@ from collections import deque
 # vente_gain_p100 - Vente si gain atteint % 
 
 
-def simulate_trading(actions, achat_delta, achat_deficit_p100, achat_rehausse_p100, vente_deficitMax, vente_gainMax, pourcent_ajustement):
+def simulate_trading(actions, bot_choisi : bot):
+    
+    # On defini les parametres du bot
+    achat_delta = bot_choisi.GetAchat_delta
+    achat_deficit_p100 = bot_choisi.GetAchat_deficit_p100
+    achat_rehausse_p100 = bot_choisi.GetAchat_rehausse_p100
+    vente_deficitMax = bot_choisi.GetVente_deficitMax
+    vente_gainMax = bot_choisi.GetVente_gainMax
+    pourcent_ajustement = bot_choisi.GetPourcent_ajustement
+
+    
     actions_detenues = 0
     prix_action = 1 #defaut 1€ 
     delta_actions = deque()
@@ -50,7 +61,9 @@ def simulate_trading(actions, achat_delta, achat_deficit_p100, achat_rehausse_p1
     actions_detenues = 0
     portefeuille_history.append(portefeuille)  # Ajouter le solde final à l'historique
 
-    return portefeuille, portefeuille_history
+    # NOTE : Mettre le retour de monnaie dans le bot
+
+    return bot_choisi
 
 
 # On adapte le delta d'achat
