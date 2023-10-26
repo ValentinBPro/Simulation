@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # Lecture des valeurs de l'action depuis un fichier
 actions = []
-with open('donnees_random.txt', 'r') as file:
+with open('source\\donnees_random.txt', 'r') as file:
     for line in file:
         actions.append(float(line.strip()))  # Convertir les valeurs en float et les ajouter à la liste
 
@@ -32,7 +32,7 @@ plt.grid(True)
 '''
 
 # Sauvegarder la courbe dans un fichier
-#plt.savefig('solde_evolution.png')
+plt.savefig('solde_evolution.png')
 
 # Afficher la courbe
 plt.show()
